@@ -3,25 +3,26 @@ webhooks = {
     ['pickup'] = '',
     ['give'] = '',
     ['stash'] = '',
-}
-hooks = {
+} hooks = {
     ['drop'] = {
         from = 'player',
         to = 'drop',
         callback = function(payload)
             local playerName = GetPlayerName(payload.source)
+            
             local playerIdentifier = GetPlayerIdentifiers(payload.source)[1]
             local playerCoords = GetEntityCoords(GetPlayerPed(payload.source))
             sendWebhook('drop', {
                 {
                     title = 'Drop',
-                    description = ('Hráč **%s** (%s, %s) **položil** item **%s** x%s (metadata: %s) na souřadnicích %s.')
+                    description = (
+                        '**[Name]:** **%s** **[ID]:** %s, ||**%s**|| **Dropped** %s **%s** (metadata: %s) on the coordinates:`` %s.``')
                         :format(
                             playerName,
-                            playerIdentifier,
                             payload.source,
-                            payload.fromSlot.name,
+                            playerIdentifier,
                             payload.fromSlot.count,
+                            payload.fromSlot.name,
                             json.encode(payload.fromSlot.metadata),
                             ('%s, %s, %s'):format(playerCoords.x, playerCoords.y, playerCoords.z)
                         ),
@@ -40,13 +41,14 @@ hooks = {
             sendWebhook('pickup', {
                 {
                     title = 'Pickup',
-                    description = ('Hráč **%s** (%s, %s) **vzal** item **%s** x%s (metadata: %s) **ze země** na souřadnicích %s.')
+                    description = (
+                        '**[Name]:** **%s** **[ID]:** %s, ||**%s**|| **Picked Up** %s **%s** (metadata: %s) on the coordinates:`` %s.``')
                         :format(
                             playerName,
-                            playerIdentifier,
                             payload.source,
-                            payload.fromSlot.name,
+                            playerIdentifier,
                             payload.fromSlot.count,
+                            payload.fromSlot.name,
                             json.encode(payload.fromSlot.metadata),
                             ('%s, %s, %s'):format(playerCoords.x, playerCoords.y, playerCoords.z)
                         ),
@@ -69,21 +71,20 @@ hooks = {
             local targetCoords = GetEntityCoords(GetPlayerPed(targetSource))
             sendWebhook('give', {
                 {
-                    title = 'Předání itemů mezi hráči',
-                    description = ('Hráč **%s** (%s, %s) **dal** hráči **%s** (%s, %s) item **%s** x%s (metadata: %s) na souřadnicích %s a %s.')
-                        :format(
+                    title = 'Transfer of items between players',
+                    description = ('**[Name]:** **%s** **ID [%s] **|| **%s**||   **GAVE**  ** PLAYER: **%s** **[%s] %s %s ||%s|| metadata:|| %s||) at ||%s||')
+                     :format(
                             playerName,
-                            playerIdentifier,
                             payload.source,
+                            playerIdentifier,
                             targetName,
-                            targetIdentifier,
                             targetSource,
-                            payload.fromSlot.name,
                             payload.fromSlot.count,
+                            payload.fromSlot.name,
+                            targetIdentifier,
                             json.encode(payload.fromSlot.metadata),
-                            ('%s, %s, %s'):format(playerCoords.x, playerCoords.y, playerCoords.z),
-                            ('%s, %s, %s'):format(targetCoords.x, targetCoords.y, targetCoords.z)
-                        ),
+                            ('%s, %s, %s'):format(playerCoords.x, playerCoords.y, playerCoords.z)
+                         ),
                     color = 0x00ff00
                 }
             })
@@ -98,8 +99,8 @@ hooks = {
             local playerCoords = GetEntityCoords(GetPlayerPed(payload.source))
             sendWebhook('stash', {
                 {
-                    title = 'Sklad',
-                    description = ('Hráč **%s** (%s, %s) **dal** item **%s** x%s (metadata: %s) **do skladu %s** na souřadnicích %s.')
+                    title = 'Stash',
+                    description = ('**[Name]:** **%s** (%s, %s) **stashed** item **%s** x%s (metadata: %s) **in stash %s** at %s coordinates.')
                         :format(
                             playerName,
                             playerIdentifier,
@@ -124,9 +125,9 @@ hooks = {
             local playerCoords = GetEntityCoords(GetPlayerPed(payload.source))
             sendWebhook('stash', {
                 {
-                    title = 'Sklad',
-                    description = ('Hráč **%s** (%s, %s) **vzal** item **%s** x%s (metadata: %s) **ze skladu %s** na souřadnicích %s.')
-                        :format(
+                    title = 'Stash',
+                    description = ('**[Name]:** **%s** (%s, %s) **Removed** item **%s** x%s (metadata: %s) **From stash %s** at %s coordinates.')
+                    :format(
                             playerName,
                             playerIdentifier,
                             payload.source,
